@@ -73,7 +73,7 @@ public class Yumzee extends Application {
 		// Ajout des dées
 		for (int i = 0 ; i < 5 ; i++) {
 			De de = new De();
-			zonecentrale.getChildren().add(de.getAffichage());
+			// zonecentrale.getChildren().add(de.getAffichage()); 		implement the method getAffichage
 			zonecentrale.setAlignment(Pos.BOTTOM_CENTER);
 		}
 
