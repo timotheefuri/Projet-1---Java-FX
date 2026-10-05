@@ -155,7 +155,6 @@ public class Pointage {
      * - contientNbFaces([0,3,1,1,0,0,0], 3) → true (trois 1)
      * - contientNbFaces([0,2,2,1,0,0,0], 3) → false (pas de triplet)
      */
-    //hello tim
     private boolean contientNbFaces(int[] compteVals, int compte) {
 
         for (int i = 0; i < compteVals.length; i++) {
