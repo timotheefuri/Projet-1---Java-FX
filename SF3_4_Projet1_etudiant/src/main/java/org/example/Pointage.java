@@ -2,6 +2,7 @@ package org.example;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
 
 import javax.swing.*;
@@ -175,7 +176,9 @@ public class Pointage {
     public class GestionCombinaisons implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
+            for (ToggleButton btn : ) {
 
+            }
         }
     }
 }
