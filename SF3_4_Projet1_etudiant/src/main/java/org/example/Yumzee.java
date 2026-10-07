@@ -42,6 +42,8 @@ public class Yumzee extends Application {
 	private Pointage pointage = new Pointage(); // Gestion du pointage
 	Text txtTotal;
 
+	private AnimationDe animationDe = new AnimationDe();
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -176,15 +178,7 @@ public class Yumzee extends Application {
 			Button btnKeep = new Button("🎯");
 			boutonsCombinaison[i] = btnKeep;
 			btnKeep.setOnAction(new GestionCombinaisons());
-			//btnKeep.setToggleGroup(groupe);
 			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
-			//btnKeep.selectedProperty().addListener((obs, ancien, nouveau) -> {
-				//if (nouveau) {
-				//	btnKeep.setStyle("-fx-background-color: darkblue; -fx-text-fill: white;");
-				//} else {
-				//	btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
-			//	}
-			//});
 			zonePoints.add(btnKeep,5,1+i);
 			combiNom[i].setFont(Font.font("Tahoma",FontWeight.BOLD,10));
 			zonePoints.add(combiNom[i],6,1+i);
@@ -229,6 +223,9 @@ public class Yumzee extends Application {
 	private void lancerDes() {
 		for (De de : listeDes) {
 			de.lancer();
+			if (!de.isGarde()) {
+				animationDe.lancer(de);
+			}
 		}
 		lancersRestants--;
 		lblLancers.setText("Lancers restants : " + lancersRestants);
