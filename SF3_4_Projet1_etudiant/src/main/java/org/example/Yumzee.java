@@ -19,6 +19,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 
 
@@ -35,7 +37,8 @@ public class Yumzee extends Application {
 	private final int TOURS_MAX = 6; // Nombre total de tours
 	private Label lblLancers; // Affichage des lancers
 	private Label lblTour; // Affichage du tour actuel
-	private ToggleButton[] boutonsCombinaison = new ToggleButton[MAX_COMBINAISONS]; // 6 combinaisons
+	private Button btnLancer;
+	private Button[] boutonsCombinaison = new Button[MAX_COMBINAISONS]; // 6 combinaisons
 	private Pointage pointage = new Pointage(); // Gestion du pointage
 	Text txtTotal;
 
@@ -54,6 +57,7 @@ public class Yumzee extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Yumzee - Timothée Furi, Rushi Patel !");
 			primaryStage.show();
+			lancerDes();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,18 +125,19 @@ public class Yumzee extends Application {
 		zoneLancer.setBackground(new Background(backgroundFill));
 
 		// Ajout des autres éléments nécessaires
-		Button lancer = new Button("Lancer les dés");   // implement this button
+		btnLancer = new Button("Lancer les dés");
+		btnLancer.setOnAction(e -> actionLancer());   // implement this button
 		lblLancers = new Label("Lancers restants : " + lancersRestants);
 		lblTour = new Label("Tour : " + tourActuel + " / " + TOURS_MAX);
 
 		Font font1 = new Font("arial",18);
 		Font font2 = new Font("arial",16);
 
-		lancer.setFont(font1);
+		btnLancer.setFont(font1);
 		lblLancers.setFont(font2);
 		lblTour.setFont(font2);
 
-		zoneLancer.getChildren().addAll(lancer, lblLancers, lblTour);
+		zoneLancer.getChildren().addAll(btnLancer, lblLancers, lblTour);
 
 		return zoneLancer;
 	}
@@ -168,17 +173,18 @@ public class Yumzee extends Application {
 				diceIcon.setFitHeight(18);
 				zonePoints.add(diceIcon, 5 - listDices[i].length + j, 1 + i);
 			}
-			ToggleButton btnKeep = new ToggleButton("🎯");
+			Button btnKeep = new Button("🎯");
 			boutonsCombinaison[i] = btnKeep;
-			btnKeep.setToggleGroup(groupe);
+			btnKeep.setOnAction(new GestionCombinaisons());
+			//btnKeep.setToggleGroup(groupe);
 			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
-			btnKeep.selectedProperty().addListener((obs, ancien, nouveau) -> {
-				if (nouveau) {
-					btnKeep.setStyle("-fx-background-color: darkblue; -fx-text-fill: white;");
-				} else {
-					btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
-				}
-			});
+			//btnKeep.selectedProperty().addListener((obs, ancien, nouveau) -> {
+				//if (nouveau) {
+				//	btnKeep.setStyle("-fx-background-color: darkblue; -fx-text-fill: white;");
+				//} else {
+				//	btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
+			//	}
+			//});
 			zonePoints.add(btnKeep,5,1+i);
 			combiNom[i].setFont(Font.font("Tahoma",FontWeight.BOLD,10));
 			zonePoints.add(combiNom[i],6,1+i);
@@ -190,6 +196,64 @@ public class Yumzee extends Application {
 		txtTotal.setFont(Font.font("Tahoma",FontWeight.BOLD,12));
 		zonePoints.add(txtTotal,4,7);
 		return zonePoints;
+	}
+	private class GestionCombinaisons implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent e) {
+			for (int i = 0; i < MAX_COMBINAISONS; i++) {
+				if (e.getSource() == boutonsCombinaison[i]) {
+					CategorieCombinaison categorie = CategorieCombinaison.fromIndex(i);
+					int points = pointage.calculerScore(categorie, listeDes.clone());
+					pointage.ajoutePoints(points);
+					txtTotal.setText(String.valueOf(pointage.getTotalPoints()));
+					boutonsCombinaison[i].setDisable(true);
+					prochainTour();
+					return;
+				}
+			}
+		}
+	}
+
+	private void actionLancer() {
+		if (lancersRestants == 0) {
+			Alert alerte = new Alert(Alert.AlertType.WARNING);
+			alerte.setTitle("Choix obligatoire");
+			alerte.setHeaderText("Plus aucun lancer disponible");
+			alerte.setContentText("Vous devez choisir une combinaison dans la zone des points.");
+			alerte.showAndWait();
+			return;
+		}
+		lancerDes();
+	}
+
+	private void lancerDes() {
+		for (De de : listeDes) {
+			de.lancer();
+		}
+		lancersRestants--;
+		lblLancers.setText("Lancers restants : " + lancersRestants);
+	}
+
+	private void prochainTour() {
+		if (tourActuel < TOURS_MAX) {
+			tourActuel++;
+			lancersRestants = 3;
+			lblTour.setText("Tour : " + tourActuel + " / " + TOURS_MAX);
+			for (De de : listeDes) {
+				de.liberer();
+			}
+			lancerDes(); // premier lancer automatique
+		} else {
+			finDePartie();
+		}
+	}
+
+	private void finDePartie() {
+		Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+		alerte.setTitle("Fin de partie");
+		alerte.setHeaderText("Partie terminée !");
+		alerte.setContentText("Votre score total est : " + pointage.getTotalPoints());
+		alerte.showAndWait();
 	}
 
 	public static void main(String[] args) {
