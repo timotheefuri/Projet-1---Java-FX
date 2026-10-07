@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -25,13 +26,29 @@ public class Yumzee extends Application {
 	// Initialisation de la base
 	public Stage primaryStage = new Stage();
 	public BorderPane root = new BorderPane();
-	public Scene scene = new Scene(root, 800, 500);
+	public Scene scene = new Scene(root, 630, 430);
 
+	final int MAX_COMBINAISONS = 6; // 6 combinaisons
+	private De[] listeDes; // Liste des 5 dés
+	private int lancersRestants = 3; // Lancers restants dans le tour
+	private int tourActuel = 1; // Numéro de tour
+	private final int TOURS_MAX = 6; // Nombre total de tours
+	private Label lblLancers; // Affichage des lancers
+	private Label lblTour; // Affichage du tour actuel
+	private ToggleButton[] boutonsCombinaison = new ToggleButton[MAX_COMBINAISONS]; // 6 combinaisons
+	private Pointage pointage = new Pointage(); // Gestion du pointage
+	Text txtTotal;
 
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			this.primaryStage = primaryStage;
+
+			//modification de toutes les zones
+			root.setTop(creerBarreMenu());
+			root.setCenter(creerZoneDes());
+			root.setBottom(creerZoneLancer());
+			root.setRight(creerZonePoints());
 
 			// Dernier changement pour la fênetre
 			primaryStage.setScene(scene);
@@ -42,7 +59,7 @@ public class Yumzee extends Application {
 		}
 	}
 
-	public void creerBarreMenu() {
+	public MenuBar creerBarreMenu() {
 		// Initialisation de MenuBar
 		MenuBar mb = new MenuBar();
 
@@ -72,6 +89,7 @@ public class Yumzee extends Application {
 		// Position du MenuBar
 		root.setTop(mb);
 
+		return mb;
 	}
 
 	// not finished
@@ -81,9 +99,13 @@ public class Yumzee extends Application {
 		zonecentrale.setPadding(new Insets(0,20,10,20));
 
 		// Ajout des dées
-		for (int i = 0 ; i < 6 ; i++) {
+		listeDes = new De[5];
+		for (int i = 0 ; i < 5 ; i++) {
 			De de = new De();
-			// zonecentrale.getChildren().add(de.getAffichage()); 		implement the method getAffichage
+			de.getAffichage().setFitWidth(50);
+			de.getAffichage().setFitHeight(50);
+			listeDes[i] = de;
+			zonecentrale.getChildren().add(de.getAffichage());
 			zonecentrale.setAlignment(Pos.BOTTOM_CENTER);
 		}
 
@@ -93,50 +115,80 @@ public class Yumzee extends Application {
 	public VBox creerZoneLancer() {
 		// Format du Vbox
 		VBox zoneLancer = new VBox(5);
-		zoneLancer.setPadding(new Insets(0,20,10,20));
+		zoneLancer.setPadding(new Insets(10,20,10,20));
 		zoneLancer.setAlignment(Pos.CENTER);
 		BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY);
 		zoneLancer.setBackground(new Background(backgroundFill));
 
 		// Ajout des autres éléments nécessaires
-        Button lancer = new Button("Lancer les dés");   // implement this button
-		Label lancerRestant = new Label("Lancer restants :");
-		Label tour = new Label("Tour :");
+		Button lancer = new Button("Lancer les dés");   // implement this button
+		lblLancers = new Label("Lancers restants : " + lancersRestants);
+		lblTour = new Label("Tour : " + tourActuel + " / " + TOURS_MAX);
 
 		Font font1 = new Font("arial",18);
 		Font font2 = new Font("arial",16);
 
 		lancer.setFont(font1);
-		lancerRestant.setFont(font2);
-		tour.setFont(font2);
+		lblLancers.setFont(font2);
+		lblTour.setFont(font2);
+
+		zoneLancer.getChildren().addAll(lancer, lblLancers, lblTour);
 
 		return zoneLancer;
 	}
 
 	public GridPane creerZonePoints() {
-		GridPane zonePoints = new GridPane(20,10);
-		zonePoints.setPadding(new Insets(0,20,10,20));
+		GridPane zonePoints = new GridPane(2,10);
+		zonePoints.setPadding(new Insets(10,10,10,10));
 		BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTSALMON, CornerRadii.EMPTY, Insets.EMPTY);
 		zonePoints.setBackground(new Background(backgroundFill));
 
-		Label titre = new Label("Combinaisons : ");
+		Label titre = new Label("Combinaisons");
 		titre.setFont(Font.font("Tahoma", FontWeight.BOLD,16));
+		zonePoints.add(titre,0,0,7,1);
 
 		// ajout des images de dés
-		Image image1 = new Image("1.png");
-		Image image2 = new Image("2.png");
-		Image image3 = new Image("3.png");
-		Image image4 = new Image("4.png");
-		Image image5 = new Image("5.png");
-		Image image6 = new Image("6.png");
+		String[] listImages = new String[] {"1.png","2.png","3.png","4.png","5.png","6.png"};
+		ImageView[] listImagesViews = new ImageView[listImages.length];
+		Label[] combiNom = new Label[] {new Label("Brelan"),new Label("Carré"),new Label("Full"),new Label("Petite Suite"),new Label("Grande Suite"), new Label("5 identiques")};
+		ToggleGroup groupe = new ToggleGroup();
 
-		ImageView imageView1 = new ImageView(image1);
-		ImageView imageView2 = new ImageView(image2);
-		ImageView imageView3 = new ImageView(image3);
-		ImageView imageView4 = new ImageView(image4);
-		ImageView imageView5 = new ImageView(image5);
-		ImageView imageView6 = new ImageView(image6);
+		for (int i = 0; i < listImages.length; i++) {
+			Image image = new Image(listImages[i]);
+			ImageView imageView = new ImageView(image);
+			listImagesViews[i] = imageView;
+		}
 
+		int[][] listDices = new int[][] {{2,2,2}, {3,3,3,3}, {1,1,4,4,4}, {1,2,3,4}, {0,1,2,3,4}, {5,5,5,5,5} };
+
+		for (int i = 0; i < listDices.length; i++) {
+			for (int j = 0 ; j < listDices[i].length; j++) {
+				ImageView diceIcon = new ImageView(listImagesViews[listDices[i][j]].getImage());
+				diceIcon.setFitWidth(18);
+				diceIcon.setFitHeight(18);
+				zonePoints.add(diceIcon, 5 - listDices[i].length + j, 1 + i);
+			}
+			ToggleButton btnKeep = new ToggleButton("✓");   // implement this button
+			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
+			boutonsCombinaison[i] = btnKeep;
+			btnKeep.selectedProperty().addListener((obs, ancien, nouveau) -> {
+				if (nouveau) {
+					btnKeep.setStyle("-fx-background-color: darkblue; -fx-text-fill: white;");
+				} else {
+					btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
+				}
+			});
+			btnKeep.setToggleGroup(groupe);
+			zonePoints.add(btnKeep,5,1+i);
+			combiNom[i].setFont(Font.font("Tahoma",FontWeight.BOLD,10));
+			zonePoints.add(combiNom[i],6,1+i);
+		}
+		Label points = new Label("Total points :");
+		points.setFont(Font.font("Tahoma",FontWeight.BOLD,10));
+		zonePoints.add(points,0,7,4,1);
+		txtTotal = new Text(String.valueOf(pointage.getTotalPoints()));
+		txtTotal.setFont(Font.font("Tahoma",FontWeight.BOLD,12));
+		zonePoints.add(txtTotal,4,7);
 		return zonePoints;
 	}
 

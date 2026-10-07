@@ -1,5 +1,11 @@
 package org.example;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
+
+import javax.swing.*;
+
 /**
  * Classe Pointage - Gère le système de calcul et de suivi des points pour le jeu Yumzee
  *
@@ -164,5 +170,12 @@ public class Pointage {
         }
 
         return false;
+    }
+
+    public class GestionCombinaisons implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent event) {
+
+        }
     }
 }
