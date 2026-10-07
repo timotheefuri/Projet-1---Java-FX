@@ -9,7 +9,6 @@ public class De {
     private static final Random HASARD = new Random();
     private static final int TAILLE = 64;
     private static final Image[] CACHE_IMAGES = new Image[7];
-
     private int valeur;
     private boolean garde;
     private ImageView vueImageDe;
@@ -17,7 +16,6 @@ public class De {
     public De() {
         valeur = 1;
         garde = false;
-
         vueImageDe = new ImageView(chargerImage(1));
         vueImageDe.setFitWidth(TAILLE);
         vueImageDe.setFitHeight(TAILLE);
@@ -53,7 +51,6 @@ public class De {
             mettreAJourAffichage();
         }
     }
-
     private void mettreAJourAffichage() {
         vueImageDe.setImage(chargerImage(valeur));
 
