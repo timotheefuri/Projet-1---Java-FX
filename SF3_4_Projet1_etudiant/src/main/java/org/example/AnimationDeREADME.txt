@@ -1,0 +1,1 @@
+explain how animation de works with links to integrals and derivatives

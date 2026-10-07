@@ -173,12 +173,12 @@ public class Pointage {
         return false;
     }
 
-    public class GestionCombinaisons implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent event) {
-            for (ToggleButton btn : ) {
+    //public class GestionCombinaisons implements EventHandler<ActionEvent> {
+        //@Override
+        // void handle(ActionEvent event) {
+            //for (ToggleButton btn : ) {
 
-            }
-        }
-    }
+            //}
+        //}
+    //}
 }
