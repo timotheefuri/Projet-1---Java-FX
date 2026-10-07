@@ -168,9 +168,10 @@ public class Yumzee extends Application {
 				diceIcon.setFitHeight(18);
 				zonePoints.add(diceIcon, 5 - listDices[i].length + j, 1 + i);
 			}
-			ToggleButton btnKeep = new ToggleButton("✓");   // implement this button
-			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
+			ToggleButton btnKeep = new ToggleButton("🎯");
 			boutonsCombinaison[i] = btnKeep;
+			btnKeep.setToggleGroup(groupe);
+			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
 			btnKeep.selectedProperty().addListener((obs, ancien, nouveau) -> {
 				if (nouveau) {
 					btnKeep.setStyle("-fx-background-color: darkblue; -fx-text-fill: white;");
@@ -178,7 +179,6 @@ public class Yumzee extends Application {
 					btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
 				}
 			});
-			btnKeep.setToggleGroup(groupe);
 			zonePoints.add(btnKeep,5,1+i);
 			combiNom[i].setFont(Font.font("Tahoma",FontWeight.BOLD,10));
 			zonePoints.add(combiNom[i],6,1+i);
