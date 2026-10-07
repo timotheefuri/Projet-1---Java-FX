@@ -44,11 +44,11 @@ public class Yumzee extends Application {
 		try {
 			this.primaryStage = primaryStage;
 
+			//modification de toutes les zones
 			root.setTop(creerBarreMenu());
 			root.setCenter(creerZoneDes());
 			root.setBottom(creerZoneLancer());
 			root.setRight(creerZonePoints());
-
 
 			// Dernier changement pour la fênetre
 			primaryStage.setScene(scene);
@@ -142,7 +142,6 @@ public class Yumzee extends Application {
 		zonePoints.setPadding(new Insets(10,10,10,10));
 		BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTSALMON, CornerRadii.EMPTY, Insets.EMPTY);
 		zonePoints.setBackground(new Background(backgroundFill));
-		zonePoints.setStyle("-fx-border-color: purple; -fx-border-width: 1;");
 
 		Label titre = new Label("Combinaisons");
 		titre.setFont(Font.font("Tahoma", FontWeight.BOLD,16));
@@ -152,7 +151,6 @@ public class Yumzee extends Application {
 		String[] listImages = new String[] {"1.png","2.png","3.png","4.png","5.png","6.png"};
 		ImageView[] listImagesViews = new ImageView[listImages.length];
 		Label[] combiNom = new Label[] {new Label("Brelan"),new Label("Carré"),new Label("Full"),new Label("Petite Suite"),new Label("Grande Suite"), new Label("5 identiques")};
-		Button[] buttonBleuListe = new Button[6];
 
 		for (int i = 0; i < listImages.length; i++) {
 			Image image = new Image(listImages[i]);
@@ -171,7 +169,6 @@ public class Yumzee extends Application {
 			}
 			Button btnKeep = new Button("✓");   // implement this button
 			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
-			buttonBleuListe[i] = btnKeep;
 			boutonsCombinaison[i] = btnKeep;
 			zonePoints.add(btnKeep,5,1+i);
 			combiNom[i].setFont(Font.font("Tahoma",FontWeight.BOLD,10));
