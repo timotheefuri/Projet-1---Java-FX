@@ -35,7 +35,7 @@ public class Yumzee extends Application {
 	private final int TOURS_MAX = 6; // Nombre total de tours
 	private Label lblLancers; // Affichage des lancers
 	private Label lblTour; // Affichage du tour actuel
-	private Button[] boutonsCombinaison = new Button[MAX_COMBINAISONS]; // 6 combinaisons
+	private ToggleButton[] boutonsCombinaison = new ToggleButton[MAX_COMBINAISONS]; // 6 combinaisons
 	private Pointage pointage = new Pointage(); // Gestion du pointage
 	Text txtTotal;
 
@@ -151,6 +151,7 @@ public class Yumzee extends Application {
 		String[] listImages = new String[] {"1.png","2.png","3.png","4.png","5.png","6.png"};
 		ImageView[] listImagesViews = new ImageView[listImages.length];
 		Label[] combiNom = new Label[] {new Label("Brelan"),new Label("Carré"),new Label("Full"),new Label("Petite Suite"),new Label("Grande Suite"), new Label("5 identiques")};
+		ToggleGroup groupe = new ToggleGroup();
 
 		for (int i = 0; i < listImages.length; i++) {
 			Image image = new Image(listImages[i]);
@@ -167,9 +168,17 @@ public class Yumzee extends Application {
 				diceIcon.setFitHeight(18);
 				zonePoints.add(diceIcon, 5 - listDices[i].length + j, 1 + i);
 			}
-			Button btnKeep = new Button("✓");   // implement this button
+			ToggleButton btnKeep = new ToggleButton("✓");   // implement this button
 			btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
 			boutonsCombinaison[i] = btnKeep;
+			btnKeep.selectedProperty().addListener((obs, ancien, nouveau) -> {
+				if (nouveau) {
+					btnKeep.setStyle("-fx-background-color: darkblue; -fx-text-fill: white;");
+				} else {
+					btnKeep.setStyle("-fx-background-color: royalblue; -fx-text-fill: white;");
+				}
+			});
+			btnKeep.setToggleGroup(groupe);
 			zonePoints.add(btnKeep,5,1+i);
 			combiNom[i].setFont(Font.font("Tahoma",FontWeight.BOLD,10));
 			zonePoints.add(combiNom[i],6,1+i);
