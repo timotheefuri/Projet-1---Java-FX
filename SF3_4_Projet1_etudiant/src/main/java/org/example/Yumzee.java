@@ -255,6 +255,21 @@ public class Yumzee extends Application {
 		alerte.setContentText("Votre score total est : " + pointage.getTotalPoints());
 		alerte.showAndWait();
 	}
+	private void nouvellePartie() {
+		tourActuel = 1;
+		lancersRestants = 3;
+		lblTour.setText("Tour:" +tourActuel);
+		for (Button b:boutonsCombinaison) {
+			b.setDisable(false);
+		}
+		pointage.setTotalPoints(0);
+		txtTotal.setText("0");
+		for (De de : listeDes) {
+			de.liberer();
+		}
+		btnLancer.setDisable(false);
+		lancerDes(); // premier lancer, met aussi à jour lblLancers
+	}
 
 	public static void main(String[] args) {
 		launch(args);
