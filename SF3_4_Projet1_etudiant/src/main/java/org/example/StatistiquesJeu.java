@@ -41,7 +41,6 @@ import java.util.Random;
  * plus fréquente, puis choix de la case disponible qui rapporte le plus de points.
  */
 public class StatistiquesJeu {
-
     private static final int nb_tours = 6;
     private static final int nb_des = 5;
     private static final int nbcom = 6;
