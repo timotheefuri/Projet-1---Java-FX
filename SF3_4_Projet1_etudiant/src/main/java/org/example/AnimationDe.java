@@ -10,11 +10,10 @@ import java.util.Random;
  * Animation du lancer d'un dé
  *
  * Équation:dw/dt = -k·w
- *   (la vitesse w diminue proportionnellement à elle-même)
+ * (la vitesse w diminue proportionnellement à elle-même)
  * Solution analytique:w(t) = w0·e^(-kt)
  *
- * La variable w cumule w·dt à chaque pas de temps : c'est une approximation
- * de l'intégrale de ω, soit le nombre de faces défilées. Chaque fois qu'elle dépasse
+ * Chaque fois qu'elle dépasse
  * seuil, la face affichée change. Les changements sont donc rapides au début (w grand)
  * puis de plus en plus espacés, jusqu'à l'arrêt quand w(t) < vm.
  *

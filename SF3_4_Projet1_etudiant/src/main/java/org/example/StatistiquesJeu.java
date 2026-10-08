@@ -17,28 +17,21 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.util.Random;
 /**
-*  (5.3)
- * Concept du cours de calcul intégral. En
- * probabilité, la probabilité qu'une variable continue X se trouve dans [a, b]
- * est l'aire sous sa courbe f :  P(a ≤ X ≤ b) = fab f(x) dx.
- * (L'animation des dés, elle, applique les equation dif : voir AnimationDe.)
- *
- * Traduction dans le code : on simule 10 000 parties de 6 tours (même règles que
- * le jeu, via la classe Pointage), puis on calcule la moyenne et l'écart-type
- * des scores. On ajuste la densité gaussienne
- *      f(x) = 1/(ec√(2π)) · e^(-(x-m)²/(2ec²))
- * (méthode densite). La fonction e^(-x²) n'a pas de primitive élémentaire : on
- * calcule donc l'intégrale numériquement, par la méthode de Simpson 
- * et par la méthode des trapèzes,qui approchent l'aire sous la courbe par des paraboles ou des trapèzes. Le graphique
- * montre l'histogramme, la courbe ajustée et l'aire intégrée en couleur.
- *
- * Signification du résultat : P(a ≤ score ≤ b) est la chance qu'une partie, jouée
- * avec la stratégie simulée, donne un score entre a et b. Par exemple, un résultat
- * de 40 % pour P(score ≥ 100) signifie qu'environ 4 parties sur 10 atteignent au
- * moins 100 points. 
- *
- * Strat: à chaque tour, 3 lancers en gardant les dés de la valeur la
- * plus fréquente, puis choix de la case disponible qui rapporte le plus de points.
+(5.3)
+ Concept du cours de calcul intégral. La probabilité qu'une variable continue X se trouve dans [a, b]
+  est l'aire sous sa courbe f :  P(a ≤ X ≤ b) = fab f(x) dx.
+ Dans le code : on simule 10 000 parties de 6 tours et on calcule la moyenne et l'écart-type
+ des scores. On ajuste la densité gaussienne qui est:
+      f(x) = 1/(ec√(2π)) · e^(-(x-m)²/(2ec²))
+On calcule donc l'intégrale numériquement, par la méthode de Simpson
+et par la méthode des trapèzes,qui approchent l'aire sous la courbe par des paraboles ou des trapèzes. Le graphique
+est l'histogramme, la courbe ajustée et l'aire intégrée en couleur.
+Signification du résultat : P(a ≤ score ≤ b) est la chance qu'une partie, jouée
+avec la stratégie simulée, donne un score entre a et b. Par exemple, un résultat
+ de 40 % pour P(score ≥ 100) signifie qu'environ 4 parties sur 10 atteignent au
+moins 100 points.
+ Strat: à chaque tour, 3 lancers en gardant les dés de la valeur la
+ plus fréquente, puis choix de la case disponible qui rapporte le plus de points.
  */
 public class StatistiquesJeu {
     private static final int nb_tours = 6;
