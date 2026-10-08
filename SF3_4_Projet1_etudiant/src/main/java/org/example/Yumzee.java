@@ -21,16 +21,16 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-
-
+import java.util.Optional;
 
 public class Yumzee extends Application {
 	// Initialisation de la base
 	public Stage primaryStage = new Stage();
 	public BorderPane root = new BorderPane();
 	public Scene scene = new Scene(root, 630, 430);
-
-	final int MAX_COMBINAISONS = 6; // 6 combinaisons
+	private int desEnAnimation = 0;
+	final int Maxcombos = 6; // 6 combinaisons
+	private final boolean[] utilisee = new boolean[Maxcombos];
 	private De[] listeDes; // Liste des 5 dés
 	private int lancersRestants = 3; // Lancers restants dans le tour
 	private int tourActuel = 1; // Numéro de tour
@@ -38,17 +38,14 @@ public class Yumzee extends Application {
 	private Label lblLancers; // Affichage des lancers
 	private Label lblTour; // Affichage du tour actuel
 	private Button btnLancer;
-	private Button[] boutonsCombinaison = new Button[MAX_COMBINAISONS]; // 6 combinaisons
-	private Pointage pointage = new Pointage(); // Gestion du pointage
+	private final Button[] boutonsCombinaison = new Button[Maxcombos]; // 6 combinaisons
+	private final Pointage pointage = new Pointage(); // Gestion du pointage
 	Text txtTotal;
-
-	private AnimationDe animationDe = new AnimationDe();
-
+	private final AnimationDe animationDe = new AnimationDe();
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			this.primaryStage = primaryStage;
-
 			//modification de toutes les zones
 			root.setTop(creerBarreMenu());
 			root.setCenter(creerZoneDes());
@@ -64,7 +61,6 @@ public class Yumzee extends Application {
 			e.printStackTrace();
 		}
 	}
-
 	public MenuBar creerBarreMenu() {
 		// Initialisation de MenuBar
 		MenuBar mb = new MenuBar();
@@ -78,12 +74,14 @@ public class Yumzee extends Application {
 		btnNP.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
 		btnQuitter.setOnAction(event -> {primaryStage.close();});
 		mb.getMenus().addAll(menuJeu);
+		btnNP.setOnAction(e -> nouvellePartie());
 
 		// Menu bar aide
 		Menu menuAide = new Menu("Aide");
 		MenuItem btnPropos = new MenuItem("À propos");
 		MenuItem btnStats = new MenuItem("Statistiques");  // implement this button
 		menuAide.getItems().addAll(btnPropos,btnStats);
+		btnStats.setOnAction(e -> StatistiquesJeu.afficherModule(primaryStage));
 		menuAide.setAccelerator(KeyCombination.keyCombination("Alt+A"));
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setTitle("À propos de Yumzee");
@@ -94,16 +92,13 @@ public class Yumzee extends Application {
 
 		// Position du MenuBar
 		root.setTop(mb);
-
 		return mb;
 	}
-
 	// not finished
 	public HBox creerZoneDes() {
 		// Format du Hbox
 		HBox zonecentrale = new HBox(10);
 		zonecentrale.setPadding(new Insets(0,20,10,20));
-
 		// Ajout des dées
 		listeDes = new De[5];
 		for (int i = 0 ; i < 5 ; i++) {
@@ -114,10 +109,8 @@ public class Yumzee extends Application {
 			zonecentrale.getChildren().add(de.getAffichage());
 			zonecentrale.setAlignment(Pos.BOTTOM_CENTER);
 		}
-
 		return zonecentrale;
 	}
-
 	public VBox creerZoneLancer() {
 		// Format du Vbox
 		VBox zoneLancer = new VBox(5);
@@ -125,25 +118,19 @@ public class Yumzee extends Application {
 		zoneLancer.setAlignment(Pos.CENTER);
 		BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY);
 		zoneLancer.setBackground(new Background(backgroundFill));
-
 		// Ajout des autres éléments nécessaires
 		btnLancer = new Button("Lancer les dés");
 		btnLancer.setOnAction(e -> actionLancer());   // implement this button
 		lblLancers = new Label("Lancers restants : " + lancersRestants);
 		lblTour = new Label("Tour : " + tourActuel + " / " + TOURS_MAX);
-
 		Font font1 = new Font("arial",18);
 		Font font2 = new Font("arial",16);
-
 		btnLancer.setFont(font1);
 		lblLancers.setFont(font2);
 		lblTour.setFont(font2);
-
 		zoneLancer.getChildren().addAll(btnLancer, lblLancers, lblTour);
-
 		return zoneLancer;
 	}
-
 	public GridPane creerZonePoints() {
 		GridPane zonePoints = new GridPane(2,10);
 		zonePoints.setPadding(new Insets(10,10,10,10));
@@ -165,9 +152,7 @@ public class Yumzee extends Application {
 			ImageView imageView = new ImageView(image);
 			listImagesViews[i] = imageView;
 		}
-
 		int[][] listDices = new int[][] {{2,2,2}, {3,3,3,3}, {1,1,4,4,4}, {1,2,3,4}, {0,1,2,3,4}, {5,5,5,5,5} };
-
 		for (int i = 0; i < listDices.length; i++) {
 			for (int j = 0 ; j < listDices[i].length; j++) {
 				ImageView diceIcon = new ImageView(listImagesViews[listDices[i][j]].getImage());
@@ -194,20 +179,20 @@ public class Yumzee extends Application {
 	private class GestionCombinaisons implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(ActionEvent e) {
-			for (int i = 0; i < MAX_COMBINAISONS; i++) {
+			for (int i = 0; i < Maxcombos; i++) {
 				if (e.getSource() == boutonsCombinaison[i]) {
 					CategorieCombinaison categorie = CategorieCombinaison.fromIndex(i);
 					int points = pointage.calculerScore(categorie, listeDes.clone());
 					pointage.ajoutePoints(points);
 					txtTotal.setText(String.valueOf(pointage.getTotalPoints()));
+					utilisee[i] = true;
 					boutonsCombinaison[i].setDisable(true);
 					prochainTour();
 					return;
-				}
+				}// fair la pointage
 			}
 		}
 	}
-
 	private void actionLancer() {
 		if (lancersRestants == 0) {
 			Alert alerte = new Alert(Alert.AlertType.WARNING);
@@ -219,18 +204,41 @@ public class Yumzee extends Application {
 		}
 		lancerDes();
 	}
-
 	private void lancerDes() {
-		for (De de : listeDes) {
-			de.lancer();
-			if (!de.isGarde()) {
-				animationDe.lancer(de);
-			}
-		}
 		lancersRestants--;
 		lblLancers.setText("Lancers restants : " + lancersRestants);
-	}
 
+		desEnAnimation = 0;
+		for (De de : listeDes) {
+			if (!de.isGarde()) {
+				de.lancer();          // la valeur est tirée ici, une seule fois
+				desEnAnimation++;
+			}
+		}
+		if (desEnAnimation > 0) {
+			bloquerInterface(true);
+			for (De de : listeDes) {
+				if (!de.isGarde()) {
+					animationDe.lancer(de, this::finAnimationDe);
+				}
+			}
+		}
+	}
+	private void finAnimationDe() {
+		desEnAnimation--;
+		if (desEnAnimation == 0) {
+			bloquerInterface(false);
+		}
+	}
+	private void bloquerInterface(boolean bloque) {
+		btnLancer.setDisable(bloque);
+		for (int i = 0; i < Maxcombos; i++) {
+			boutonsCombinaison[i].setDisable(bloque || utilisee[i]);
+		}
+		for (De de : listeDes) {
+			de.setInteractif(!bloque);
+		}
+	}
 	private void prochainTour() {
 		if (tourActuel < TOURS_MAX) {
 			tourActuel++;
@@ -244,20 +252,29 @@ public class Yumzee extends Application {
 			finDePartie();
 		}
 	}
-
 	private void finDePartie() {
-		Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+		btnLancer.setDisable(true);
+		ButtonType btnNouvelle = new ButtonType("Nouvelle partie");
+		ButtonType btnFermer = new ButtonType("Fermer", ButtonBar.ButtonData.CANCEL_CLOSE);
+		Alert alerte = new Alert(Alert.AlertType.INFORMATION,
+				"Votre score total est : " + pointage.getTotalPoints(), btnNouvelle, btnFermer);//fini la partie avec un menu
 		alerte.setTitle("Fin de partie");
 		alerte.setHeaderText("Partie terminée !");
-		alerte.setContentText("Votre score total est : " + pointage.getTotalPoints());
-		alerte.showAndWait();
+		Optional<ButtonType> choix = alerte.showAndWait();
+		if (choix.isPresent() && choix.get() == btnNouvelle) {
+			nouvellePartie();
+		}// depend des choix peut fair une nouvelle partie ou non
 	}
 	private void nouvellePartie() {
+		if (desEnAnimation > 0) {
+			return; // on ignore Ctrl+N pendant que les dés tournent
+		}
 		tourActuel = 1;
 		lancersRestants = 3;
-		lblTour.setText("Tour:" +tourActuel);
-		for (Button b:boutonsCombinaison) {
-			b.setDisable(false);
+		lblTour.setText("Tour : " + tourActuel + " / " + TOURS_MAX);
+		for (int i = 0; i < Maxcombos; i++) {
+			utilisee[i] = false;
+			boutonsCombinaison[i].setDisable(false);
 		}
 		pointage.setTotalPoints(0);
 		txtTotal.setText("0");
@@ -265,7 +282,7 @@ public class Yumzee extends Application {
 			de.liberer();
 		}
 		btnLancer.setDisable(false);
-		lancerDes(); // premier lancer, met aussi à jour lblLancers
+		lancerDes();
 	}
 
 	public static void main(String[] args) {
