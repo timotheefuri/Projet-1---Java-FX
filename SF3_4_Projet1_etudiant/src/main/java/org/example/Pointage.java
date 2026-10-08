@@ -23,7 +23,6 @@ import javax.swing.*;
  * - Grande Suite (5 consécutifs) : 40 points fixes
  * - Yumzee (5 identiques) : 50 points fixes
  *
-
  */
 public class Pointage {
 

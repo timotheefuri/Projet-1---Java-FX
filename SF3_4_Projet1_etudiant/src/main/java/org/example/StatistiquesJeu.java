@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.util.Random;
-
 /**
 *  (5.3)
  * Concept du cours de calcul intégral. En
@@ -47,23 +46,19 @@ public class StatistiquesJeu {
     private static final int nb_des = 5;
     private static final int nbcom = 6;
     private static final int LARGEUR_CLASSE = 5; // largeur d'une barre d'histogramme (points)
-
     private final Random hasard = new Random();
     private final De[] des = new De[nb_des];
     private final Pointage pointage = new Pointage();
-
     private int[] scores = new int[0];
     private int[] histogramme = new int[1];
     private int sm;
     private double moyenne;
     private double ecartType = 1;
-
     public StatistiquesJeu() {
         for (int i = 0; i < nb_des; i++) {
             des[i] = new De();
         }
     }
-    /** Simule nbParties parties complètes*/
     public void simulerParties(int nbParties) {
         scores = new int[nbParties];
         for (int i = 0; i < nbParties; i++) {
@@ -71,14 +66,12 @@ public class StatistiquesJeu {
         }
         calculerDistribution();
     }
-    /** Simule une partie de 6 tours et retourne le score total. */
     private int simulerUnePartie() {
         boolean[] utilisee = new boolean[nbcom];
         int total = 0;
 
         for (int tour = 0; tour < nb_tours; tour++) {
             boolean[] gardes = new boolean[nb_des];
-
             for (int lancer = 0; lancer < 3; lancer++) {
                 for (int d = 0; d < nb_des; d++) {
                     if (!gardes[d]) {
@@ -89,7 +82,6 @@ public class StatistiquesJeu {
                     choisirDesAGarder(gardes);
                 }
             }
-            // Choix de la meilleure case disponible
             int meilleurIndex = -1;
             int meilleurScore = -1;
             for (int idx = nbcom - 1; idx >= 0; idx--) {
@@ -106,7 +98,6 @@ public class StatistiquesJeu {
         }
         return total;
     }
-    /** Garde tous les dés ayant la valeur la plus fréquente. */
     private void choisirDesAGarder(boolean[] gardes) {
         int[] compte = new int[7];
         for (De d : des) {
@@ -140,13 +131,10 @@ public class StatistiquesJeu {
             histogramme[s / LARGEUR_CLASSE]++;
         }
     }
-
     public double densite(double x) {
         double z = (x - moyenne) / ecartType;
         return Math.exp(-0.5 * z * z) / (ecartType * Math.sqrt(2 * Math.PI));
     }
-
-    /** Intégrale de f sur [a, b] */
     public double integrerSimpson(double a, double b, int n) {
         if (n % 2 != 0) {
             n++;
@@ -158,7 +146,6 @@ public class StatistiquesJeu {
         }
         return somme * h / 3.0;
     }
-    /** Intégrale de f sur [a, b] . */
     public double integrerTrapezes(double a, double b, int n) {
         double h = (b - a) / n;
         double somme = (densite(a) + densite(b)) / 2.0;
@@ -167,7 +154,6 @@ public class StatistiquesJeu {
         }
         return somme * h;
     }
-    /** Fréquence observée des scores dans [a, b]. */
     public double probabiliteEmpirique(double a, double b) {
         int compte = 0;
         for (int s : scores) {
@@ -183,7 +169,6 @@ public class StatistiquesJeu {
     public double getEcartType() {
         return ecartType;
     }
-    /** Ouvre la fenêtre du module statistique. */
     public static void afficherModule(Stage proprietaire) {
         StatistiquesJeu stats = new StatistiquesJeu();
         TextField tfParties = new TextField("10000");
@@ -266,7 +251,6 @@ public class StatistiquesJeu {
         double zoneH = hauteur - margeB - margeH;
         g.setFill(Color.WHITE);
         g.fillRect(0, 0, largeur, hauteur);
-        // Histogramme
         g.setFill(Color.LIGHTSTEELBLUE);
         for (int i = 0; i < histogramme.length; i++) {
             double dens = histogramme[i] / (double) (scores.length * LARGEUR_CLASSE);
@@ -275,7 +259,6 @@ public class StatistiquesJeu {
             double h = dens / yMax * zoneH;
             g.fillRect(x0, hauteur - margeB - h, Math.max(w - 1, 1), h);
         }
-        // Aire sous la courbe entre a et b (valeur de l'intégrale)
         double aa = Math.max(a, 0), bb = Math.min(b, xMax);
         if (aa < bb) {
             int pts = 200;
@@ -293,7 +276,6 @@ public class StatistiquesJeu {
             g.setFill(Color.rgb(220, 50, 50, 0.45));
             g.fillPolygon(xs, ys, pts + 3);
         }
-        // Courbe de densité gaussienne
         g.setStroke(Color.DARKRED);
         g.setLineWidth(2);
         int pas = 300;
@@ -306,7 +288,6 @@ public class StatistiquesJeu {
             xPrec = px;
             yPrec = py;
         }
-        // Axes et graduations
         g.setStroke(Color.BLACK);
         g.setLineWidth(1);
         g.strokeLine(margeG, hauteur - margeB, largeur - margeD, hauteur - margeB);

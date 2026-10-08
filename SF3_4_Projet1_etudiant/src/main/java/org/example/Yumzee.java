@@ -24,22 +24,21 @@ import javafx.event.EventHandler;
 import java.util.Optional;
 
 public class Yumzee extends Application {
-	// Initialisation de la base
 	public Stage primaryStage = new Stage();
 	public BorderPane root = new BorderPane();
 	public Scene scene = new Scene(root, 630, 430);
 	private int desEnAnimation = 0;
-	final int Maxcombos = 6; // 6 combinaisons
+	final int Maxcombos = 6;
 	private final boolean[] utilisee = new boolean[Maxcombos];
-	private De[] listeDes; // Liste des 5 dés
-	private int lancersRestants = 3; // Lancers restants dans le tour
-	private int tourActuel = 1; // Numéro de tour
-	private final int TOURS_MAX = 6; // Nombre total de tours
-	private Label lblLancers; // Affichage des lancers
-	private Label lblTour; // Affichage du tour actuel
+	private De[] listeDes;
+	private int lancersRestants = 3;
+	private int tourActuel = 1;
+	private final int TOURS_MAX = 6;
+	private Label lblLancers;
+	private Label lblTour;
 	private Button btnLancer;
-	private final Button[] boutonsCombinaison = new Button[Maxcombos]; // 6 combinaisons
-	private final Pointage pointage = new Pointage(); // Gestion du pointage
+	private final Button[] boutonsCombinaison = new Button[Maxcombos];
+	private final Pointage pointage = new Pointage();
 	Text txtTotal;
 	private final AnimationDe animationDe = new AnimationDe();
 	@Override
@@ -94,7 +93,6 @@ public class Yumzee extends Application {
 		root.setTop(mb);
 		return mb;
 	}
-	// not finished
 	public HBox creerZoneDes() {
 		// Format du Hbox
 		HBox zonecentrale = new HBox(10);
@@ -136,11 +134,9 @@ public class Yumzee extends Application {
 		zonePoints.setPadding(new Insets(10,10,10,10));
 		BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTSALMON, CornerRadii.EMPTY, Insets.EMPTY);
 		zonePoints.setBackground(new Background(backgroundFill));
-
 		Label titre = new Label("Combinaisons");
 		titre.setFont(Font.font("Tahoma", FontWeight.BOLD,16));
 		zonePoints.add(titre,0,0,7,1);
-
 		// ajout des images de dés
 		String[] listImages = new String[] {"1.png","2.png","3.png","4.png","5.png","6.png"};
 		ImageView[] listImagesViews = new ImageView[listImages.length];
@@ -189,7 +185,7 @@ public class Yumzee extends Application {
 					boutonsCombinaison[i].setDisable(true);
 					prochainTour();
 					return;
-				}// fair la pointage
+				}
 			}
 		}
 	}
